@@ -69,20 +69,23 @@ app.get('/department',function(req,res){
 });
 
 //Get by ID
-app.get('/id',function(req,res){
-    let sql = `SELECT * FROM students where id = ${req.query.id}`
+app.get('/id/:id',function(req,res){
+    let sql = `SELECT * FROM students where id = ${req.params.id} limit 1`
     conn.query(sql, function(err,result){
         if(err){
             console.log(err);
         }else{
-            res.send(result);
+            if(result.length < 1){
+                res.status(404).send('No info available');
+            }
+            res.send(result[0]); // can also use result.pop() - returns an object from the array!
         }
     })
 });
 
 //Update
 app.patch('/update',function(req,res){
-    let sql = `UPDATE students set gpa = ${req.query.gpa} where id = ${req.query.id}`
+    let sql = `UPDATE students set gpa = ${req.body.gpa} where id = ${req.body.id}`
     conn.query(sql, function(err,result){
         if(err){
             console.log(err);
